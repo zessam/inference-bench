@@ -20,13 +20,20 @@ integration).
 
 ```bash
 git clone https://github.com/zessam/inference-bench.git
-cd inference-bench/guidellm
+cd inference-bench
+
+# 1. Monitoring (optional), in one terminal
+cd monitoring               # set your server in prometheus.yaml
+docker compose up -d        # Grafana on http://localhost:3000 (admin/admin), import grafana.json
+
+# 2. Benchmark
+cd ../guidellm
 cp .env.example .env        # set VLLM_BASE_URL, VLLM_API_KEY, VLLM_MODEL
+docker compose run --rm guidellm synchronous   # short warm-up run
 docker compose run --rm guidellm sweep
 ```
 
-Reports appear in `./<run id>/sweep/`. To watch the server at the same time,
-start `monitoring/` first (see its README).
+Reports appear in `./<run id>/<profile>/`.
 
 ## Layout
 

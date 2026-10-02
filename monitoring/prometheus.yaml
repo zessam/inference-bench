@@ -4,7 +4,17 @@ global:
   evaluation_interval: 30s
 
 scrape_configs:
+  # vLLM's own /metrics on a RunPod Pod, through its HTTPS proxy.
   - job_name: vllm
+    scheme: https
     static_configs:
       - targets:
-          - 'host.docker.internal:8000'
+          - 'uz1ebg8pxu7rs5-8000.proxy.runpod.net'
+
+  # vLLM on this machine:
+  #
+  # - job_name: vllm
+  #   static_configs:
+  #     - targets:
+  #         - 'host.docker.internal:8000'
+

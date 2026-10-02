@@ -15,7 +15,7 @@ grafana.json          vLLM's Grafana dashboard
 vLLM serves Prometheus metrics at `/metrics` on its API port. Set the target
 in `prometheus.yaml`.
 
-vLLM on this machine (the default):
+vLLM on this machine:
 
 ```yaml
 scrape_configs:
@@ -25,7 +25,7 @@ scrape_configs:
           - 'host.docker.internal:8000'
 ```
 
-vLLM on RunPod, through its HTTPS proxy:
+vLLM on RunPod, through its HTTPS proxy (the default):
 
 ```yaml
 scrape_configs:

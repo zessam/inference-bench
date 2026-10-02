@@ -15,11 +15,19 @@ besides Docker.
 2. Copy `.env.example` to `.env` (in this folder) and fill in:
    ```
    VLLM_BASE_URL=https://<your-pod-id>-8000.proxy.runpod.net   # without /v1
-   VLLM_API_KEY=<your key>
+   VLLM_API_KEY=<the key vLLM was started with>
    VLLM_MODEL=<model id served by the endpoint>
    ```
    These are read from `.env` only. Variables set in your shell do not override
    them. The run stops with a message if they are missing.
+
+   Check the URL, key and model before a run:
+   ```bash
+   source .env
+   curl -s -H "Authorization: Bearer $VLLM_API_KEY" "$VLLM_BASE_URL/v1/models"
+   ```
+   `VLLM_MODEL` must match the `id` it returns. GuideLLM also downloads that
+   model's tokenizer from Hugging Face to size the prompts.
 
 ## Running
 

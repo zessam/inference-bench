@@ -49,7 +49,7 @@ def endpoint_env():
     env = os.environ.copy()
     env["GUIDELLM__SPEC__BACKEND__TARGET"] = base_url
     env["GUIDELLM__SPEC__BACKEND__MODEL"] = model
-    if api_key and api_key != "your_runpod_api_key":
+    if api_key and api_key != "your_vllm_api_key":
         env["GUIDELLM__SPEC__BACKEND__API_KEY"] = api_key
     return env, base_url, model
 
