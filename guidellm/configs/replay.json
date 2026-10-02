@@ -1,0 +1,35 @@
+{
+  "metadata": {
+    "name": "replay",
+    "description": "Replays the request timing and sizes of a trace file."
+  },
+  "spec": {
+    "backend": {
+      "kind": "openai_http",
+      "request_format": "/v1/chat/completions"
+    },
+    "profile": {
+      "kind": "replay",
+      "time_scale": 1.0
+    },
+    "data": [
+      {
+        "kind": "trace_synthetic",
+        "source": {
+          "kind": "json_file",
+          "path": "/traces/sample.jsonl"
+        }
+      }
+    ],
+    "constraints": [
+      {
+        "kind": "max_duration",
+        "seconds": 600
+      },
+      {
+        "kind": "max_error_rate",
+        "rate": 0.1
+      }
+    ]
+  }
+}

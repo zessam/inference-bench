@@ -1,0 +1,33 @@
+{
+  "metadata": {
+    "name": "throughput",
+    "description": "All requests at once: maximum throughput."
+  },
+  "spec": {
+    "backend": {
+      "kind": "openai_http",
+      "request_format": "/v1/chat/completions"
+    },
+    "profile": {
+      "kind": "throughput",
+      "max_concurrency": 256
+    },
+    "data": [
+      {
+        "kind": "synthetic_text",
+        "prompt_tokens": 256,
+        "output_tokens": 128
+      }
+    ],
+    "constraints": [
+      {
+        "kind": "max_duration",
+        "seconds": 60
+      },
+      {
+        "kind": "max_error_rate",
+        "rate": 0.1
+      }
+    ]
+  }
+}

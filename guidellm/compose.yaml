@@ -1,0 +1,41 @@
+# GuideLLM benchmarks using the official image.
+#
+#   docker compose run --rm guidellm                  # PROFILES from .env (default: all)
+#   docker compose run --rm guidellm poisson          # one profile
+#   docker compose run --rm guidellm sweep poisson    # several, run in this order
+#   docker compose run --rm guidellm all              # every config in configs/
+#   docker compose run --rm guidellm --list           # available profiles
+#   docker compose run --rm guidellm sweep --run-id baseline
+#
+# Profiles are configs/<name>.json and run one at a time. Endpoint, model and
+# API key come from .env (VLLM_BASE_URL, VLLM_MODEL, VLLM_API_KEY); they are
+# never written to configs/ or the reports.
+#
+# Reports are written to the folder you run the command from:
+#   ./<run id>/<profile>/benchmarks.{json,csv,html}
+# Set RESULTS_DIR in .env to always write to one folder instead.
+
+name: inferencebench
+
+services:
+  guidellm:
+    image: ghcr.io/vllm-project/guidellm:${GUIDELLM_VERSION:-v0.8.0}
+    entrypoint: ["/opt/app-root/bin/python", "/bench/bench.py"]
+    command: []
+    # Run as you so the reports are owned by you, not the image's user.
+    user: "${UID:-1000}:0"
+    # VLLM_BASE_URL, VLLM_MODEL, VLLM_API_KEY, PROFILES, RUN_ID and HF_TOKEN
+    # are read from .env only (shell variables do not override them).
+    env_file:
+      - path: .env
+        required: true
+    environment:
+      HF_HOME: /hf-cache           # tokenizer downloads, reused between runs
+    volumes:
+      - ./bench.py:/bench/bench.py:ro
+      - ./configs:/configs:ro
+      - ./traces:/traces:ro
+      - ${RESULTS_DIR:-${PWD:-.}}:/results   # your current folder
+      - ./.hf-cache:/hf-cache                 # next to this file
+    extra_hosts:
+      - "host.docker.internal:host-gateway"   # reach a server on this machine

@@ -1,0 +1,38 @@
+{
+  "metadata": {
+    "name": "poisson",
+    "description": "Poisson arrivals at each rate (requests/second)."
+  },
+  "spec": {
+    "backend": {
+      "kind": "openai_http",
+      "request_format": "/v1/chat/completions"
+    },
+    "profile": {
+      "kind": "poisson",
+      "rate": [
+        1,
+        2,
+        4,
+        8
+      ]
+    },
+    "data": [
+      {
+        "kind": "synthetic_text",
+        "prompt_tokens": 256,
+        "output_tokens": 128
+      }
+    ],
+    "constraints": [
+      {
+        "kind": "max_duration",
+        "seconds": 60
+      },
+      {
+        "kind": "max_error_rate",
+        "rate": 0.1
+      }
+    ]
+  }
+}

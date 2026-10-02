@@ -1,0 +1,38 @@
+{
+  "metadata": {
+    "name": "concurrent",
+    "description": "Fixed number of parallel streams, one sub-benchmark per value."
+  },
+  "spec": {
+    "backend": {
+      "kind": "openai_http",
+      "request_format": "/v1/chat/completions"
+    },
+    "profile": {
+      "kind": "concurrent",
+      "streams": [
+        1,
+        4,
+        16,
+        32
+      ]
+    },
+    "data": [
+      {
+        "kind": "synthetic_text",
+        "prompt_tokens": 256,
+        "output_tokens": 128
+      }
+    ],
+    "constraints": [
+      {
+        "kind": "max_duration",
+        "seconds": 60
+      },
+      {
+        "kind": "max_error_rate",
+        "rate": 0.1
+      }
+    ]
+  }
+}
