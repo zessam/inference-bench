@@ -136,7 +136,8 @@ def main():
         where = f"  {args.run_id}/{profile}/" if out else ""
         print(f"  {profile:12} {status}{where}")
 
-    return 0 if all(s.startswith("ok") for _, s, _ in results) else 1
+    # Skipped profiles (e.g. replay without a trace) don't fail the run.
+    return 1 if any(s.startswith("failed") for _, s, _ in results) else 0
 
 
 if __name__ == "__main__":
