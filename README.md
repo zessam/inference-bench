@@ -1,7 +1,7 @@
 # inference-bench
 
 LLM inference performance benchmarking for OpenAI-compatible endpoints, such
-as vLLM on RunPod. Everything runs in Docker.
+as vLLM. Everything runs in Docker.
 
 | Folder | What it does |
 |---|---|
@@ -23,8 +23,9 @@ git clone https://github.com/zessam/inference-bench.git
 cd inference-bench
 
 # 1. Monitoring (optional), in one terminal
-cd monitoring               # set your server in prometheus.yaml
-docker compose up -d        # Grafana on http://localhost:3000 (admin/admin), import grafana.json
+cd monitoring
+cp .env.example .env        # set VLLM_METRICS_TARGET, VLLM_METRICS_SCHEME
+docker compose up -d        # Grafana on http://localhost:3000 → Dashboards → vLLM
 
 # 2. Benchmark
 cd ../guidellm
@@ -44,5 +45,6 @@ guidellm/
   configs/          one GuideLLM scenario per profile
   traces/           trace files for the replay profile
 monitoring/
-  docker-compose.yaml, prometheus.yaml, grafana.json
+  docker-compose.yaml, .env.example, prometheus.yaml, grafana.json
+  grafana-provisioning/   data source and dashboard, loaded on start
 ```

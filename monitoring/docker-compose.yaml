@@ -9,7 +9,19 @@ services:
     ports:
       - "9090:9090"   # the default port used by Prometheus
     volumes:
-      - ./prometheus.yaml:/etc/prometheus/prometheus.yml # mount Prometheus config file
+      - ./prometheus.yaml:/etc/prometheus/prometheus.template.yml:ro # Prometheus config, with ${...} from .env
+    env_file:
+      - path: .env
+        required: true
+    # Fill in the .env values, then start Prometheus with the result.
+    entrypoint:
+      - sh
+      - -c
+      - >-
+        sed -e "s|\$${VLLM_METRICS_TARGET}|$${VLLM_METRICS_TARGET:?set it in .env}|"
+        -e "s|\$${VLLM_METRICS_SCHEME}|$${VLLM_METRICS_SCHEME:-http}|"
+        /etc/prometheus/prometheus.template.yml > /tmp/prometheus.yml &&
+        exec /bin/prometheus --config.file=/tmp/prometheus.yml --storage.tsdb.path=/prometheus
 
   grafana:
     image: grafana/grafana:latest
@@ -17,3 +29,10 @@ services:
       - prometheus
     ports:
       - "3000:3000" # the default port used by Grafana
+    env_file:
+      - path: .env
+        required: true                # GF_SECURITY_ADMIN_USER / _PASSWORD
+    volumes:
+      - ./grafana-provisioning/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml # Prometheus data source
+      - ./grafana-provisioning/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml   # where to find dashboards
+      - ./grafana.json:/var/lib/grafana/dashboards/vllm.json                                         # your vLLM dashboard

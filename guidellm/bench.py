@@ -36,9 +36,9 @@ def endpoint_env():
     api_key = os.getenv("VLLM_API_KEY", "").strip()
 
     problems = []
-    if not base_url or "YOUR-POD-ID" in base_url:
+    if not base_url or "YOUR-SERVER" in base_url:
         problems.append("VLLM_BASE_URL is not set")
-    if not model:
+    if not model or model == "YOUR-MODEL-ID":
         problems.append("VLLM_MODEL is not set")
     if problems:
         sys.exit("Set these in .env: " + "; ".join(problems))

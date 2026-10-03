@@ -1,0 +1,9 @@
+# Prometheus data source, created when Grafana starts. The uid matches the
+# one saved in grafana.json, so the dashboard picks it up without a prompt.
+apiVersion: 1
+datasources:
+  - name: prometheus
+    uid: edx8memhpd9tsa
+    type: prometheus
+    url: http://prometheus:9090
+    isDefault: true

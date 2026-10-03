@@ -5,36 +5,34 @@ length, KV-cache usage, token throughput, latency) while benchmarks run. This
 complements GuideLLM's client-side reports in `../guidellm`.
 
 ```
-docker-compose.yaml   Prometheus (port 9090) and Grafana (port 3000)
-prometheus.yaml       what Prometheus scrapes
-grafana.json          vLLM's Grafana dashboard
+docker-compose.yaml     Prometheus (port 9090) and Grafana (port 3000)
+.env                    which vLLM to scrape, Grafana login (copy .env.example)
+prometheus.yaml         what Prometheus scrapes, filled in from .env
+grafana.json            vLLM's Grafana dashboard
+grafana-provisioning/   loads the data source and grafana.json on start
 ```
 
 ## Point it at your vLLM server
 
-vLLM serves Prometheus metrics at `/metrics` on its API port. Set the target
-in `prometheus.yaml`.
+vLLM serves Prometheus metrics at `/metrics` on its API port; this needs no
+API key. Copy `.env.example` to `.env` (in this folder) and set the target.
+
+A remote vLLM server (use `https` and no port when it is behind HTTPS):
+
+```
+VLLM_METRICS_TARGET=<host>:8000
+VLLM_METRICS_SCHEME=http
+```
 
 vLLM on this machine:
 
-```yaml
-scrape_configs:
-  - job_name: vllm
-    static_configs:
-      - targets:
-          - 'host.docker.internal:8000'
+```
+VLLM_METRICS_TARGET=host.docker.internal:8000
+VLLM_METRICS_SCHEME=http
 ```
 
-vLLM on RunPod, through its HTTPS proxy (the default):
-
-```yaml
-scrape_configs:
-  - job_name: vllm
-    scheme: https
-    static_configs:
-      - targets:
-          - '<your-pod-id>-8000.proxy.runpod.net'
-```
+`.env` also sets the Grafana login (`GF_SECURITY_ADMIN_USER`,
+`GF_SECURITY_ADMIN_PASSWORD`, default `admin` / `admin`).
 
 ## Run
 
@@ -44,21 +42,18 @@ From this folder:
 docker compose up -d
 ```
 
+- Grafana: http://localhost:3000, log in with the user and password from
+  `.env`. Open **Dashboards → vLLM** and choose your model in the `model_name`
+  drop-down. The Prometheus data source and the dashboard are set up
+  automatically.
 - Prometheus: http://localhost:9090. Under **Status → Targets**, `vllm` should
   be **UP**.
-- Grafana: http://localhost:3000, user `admin`, password `admin` (you'll be
-  asked to change it).
 
-## Set up Grafana (first time)
+After changing `.env`, `prometheus.yaml` or `grafana.json`, restart:
 
-1. **Connections → Data sources → Add data source → Prometheus**, URL
-   `http://prometheus:9090`, then **Save & test**.
-2. **Dashboards → New → Import**, upload `grafana.json`, and pick the
-   Prometheus data source you just added.
-3. Choose your model in the `model_name` drop-down at the top of the dashboard.
-
-Grafana keeps this setup only while its container exists. `docker compose
-down` removes it, and you'll need to repeat these steps.
+```bash
+docker compose up -d --force-recreate
+```
 
 ## Stop
 

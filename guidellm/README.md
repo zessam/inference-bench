@@ -1,6 +1,6 @@
 # GuideLLM benchmarks
 
-Load-tests an OpenAI-compatible endpoint (for example vLLM on RunPod) with
+Load-tests an OpenAI-compatible endpoint (for example vLLM) with
 [GuideLLM](https://github.com/vllm-project/guidellm) running in its official
 Docker image (`ghcr.io/vllm-project/guidellm:v0.8.0`). Nothing to install
 besides Docker.
@@ -14,7 +14,7 @@ besides Docker.
    Integration** for your WSL distro.
 2. Copy `.env.example` to `.env` (in this folder) and fill in:
    ```
-   VLLM_BASE_URL=https://<your-pod-id>-8000.proxy.runpod.net   # without /v1
+   VLLM_BASE_URL=<server URL, e.g. http://<host>:8000>   # without /v1
    VLLM_API_KEY=<the key vLLM was started with>
    VLLM_MODEL=<model id served by the endpoint>
    ```

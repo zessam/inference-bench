@@ -1,0 +1,7 @@
+# Loads grafana.json (mounted into /var/lib/grafana/dashboards) on start.
+apiVersion: 1
+providers:
+  - name: vllm
+    type: file
+    options:
+      path: /var/lib/grafana/dashboards
